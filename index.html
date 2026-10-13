@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vn">
+<head>
+    <meta charset="UTF-8">
+    <title>Tetris</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+<header id="game-header">
+    <h1>TETRIS</h1>
+    <p>Màn 1: Chế độ cổ điển</p>
+</header>
+
+<div id="game-container">
+    <div id="game-main">
+        <div id="info-panel">
+            <h2>THÔNG TIN</h2>
+            <p>Điểm: <span id="score">0</span></p>
+            <p>Số hàng đã xóa: <span id="lines">0</span></p>
+        </div>
+
+        <div id="game-board">
+            <table id="board">
+            </table>
+        </div>
+
+        <div id="guide-panel">
+            <h2>HƯỚNG DẪN</h2>
+            <ul>
+                <li>
+                    <span class="keys">
+                        <i class="bi bi-arrow-left-square"></i>
+                        <i class="bi bi-arrow-right-square"></i>
+                    </span>
+                    Di chuyển trái / phải
+                </li>
+
+                <li>
+                    <span class="keys"><i class="bi bi-arrow-down-square"></i></span>
+                    Rơi nhanh
+                </li>
+
+                <li>
+                    <span class="keys"><i class="bi bi-arrow-up-square"></i></span>
+                    Xoay khối
+                </li>
+
+                <li>
+                    <span class="keys"><i class="bi bi-chevron-double-down"></i></span>
+                    Space: thả rơi ngay
+                </li>
+
+                <li>
+                    <span class="keys"><i class="bi bi-pause-circle"></i></span>
+                    P: tạm dừng
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script src="index.js"></script>
+</body>
+</html>
