@@ -87,7 +87,16 @@ let piece=null
 
 // tạo 1 khối ngẫu nhiên
 function randomPiece(){
+    const types = Object.keys(SHAPES);
+    const type = types[Math.floor(math.random() * types.length)];
+    const shape = SHAPES[type];
 
+    return{
+        shape: shape,
+        color: COLORS[type],
+        row: 0,
+        col: Math.floor((COLS - shape[0].length) / 2)
+    };
 }
 
 function collide(shape, row, col){
