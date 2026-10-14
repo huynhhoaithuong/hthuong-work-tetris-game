@@ -99,6 +99,11 @@ function randomPiece(){
     };
 }
 
+//đưa khối moi71 vừa tạo vào
+function spawnPiece(){
+    piece = randomPiece();
+}
+
 function collide(shape, row, col){
     for(let r = 0; r < shape.length; r++) {
 
@@ -106,4 +111,5 @@ function collide(shape, row, col){
 }
 
 createGrid();
+spawnPiece()
 render();
