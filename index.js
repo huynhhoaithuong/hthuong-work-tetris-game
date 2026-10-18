@@ -57,7 +57,7 @@ const COLORS = {
     L: '#f0a000'
 };
 
-// 0 là ô trống, lưu khối đã đặt
+// 0 là ô trống, ô đã lock sẽ lưu màu khối
 const board = [];
 for(let row = 0; row < ROWS; row++) {
     board.push(new Array(COLS).fill(0));
@@ -71,14 +71,6 @@ function createGrid(){
         cells.push([]);
         for(let col = 0; col < COLS; col++) {
             cells[row].push(tr.insertCell());
-        }
-    }
-}
-
-function render(){
-    for(let row = 0; row < ROWS; row++) {
-        for(let col = 0; col < COLS; col++) {
-            cells[row][col].style.backgroundColor = COLORS[board[row][col]] || '';
         }
     }
 }
@@ -104,12 +96,69 @@ function spawnPiece(){
     piece = randomPiece();
 }
 
-function collide(shape, row, col){
-    for(let r = 0; r < shape.length; r++) {
-
+//tô khối e lên bảng (chưa lock vẫn đg di chuyển)
+function drawPiece(){
+    for (let r = 0; r < piece.shape.length; r++) {
+        for (let c = 0; c < piece.shape[r].length; c++) {
+            if(piece.shape[r][c]){
+                cells[piece.row + r][piece.col + c].style.backgroundColor = piece.color;
+            }
+        }
     }
 }
 
-createGrid();
-spawnPiece()
-render();
+// check va chạm với tường, đáy và ô đã đc lock trước đó
+function collide(shape, row, col){
+    for(let r = 0; r < shape.length; r++) {
+        for(let c = 0; c < shape[r].length; c++){
+            if(!shape[r][c]) continue;
+            const newRow = row + r;
+            const newCol = col + c;
+            if(newCol < 0 || newCol >= COLS || newRow >= ROWS)
+                return true;
+            if(newRow >= 0 && board[newRow][newCol])
+                return true;
+        }
+    }
+    return false;
+}
+
+// lock khối vào board
+function lockPiece(){
+    for (let r = 0; r < piece.shape.length; r++) {
+        for (let c = 0; c < piece.shape[r].length; c++) {
+            if(piece.shape[r][c]){
+                board[piece.row + r][piece.col + c] = piece.color;
+            }
+        }
+    }
+}
+
+//rơi khối, nếu không thể rơi tiếp thì lock khối đó, tạo khối mới và render
+function drop(){
+    if(!collide(piece.shape, piece.row + 1, piece.col)){
+        piece.row++;
+    } else {
+        lockPiece();
+        spawnPiece();
+    }
+    render();
+}
+
+function render(){
+    for(let row = 0; row < ROWS; row++) {
+        for(let col = 0; col < COLS; col++) {
+            cells[row][col].style.backgroundColor = COLORS[board[row][col]] || '';
+        }
+    }
+    if (piece) drawPiece();
+}
+
+function init(){
+    createGrid();
+    spawnPiece();
+    render();
+    setInterval(drop, 500);
+}
+
+init();
