@@ -5,14 +5,14 @@
 }
 
 body{
-    background-color: #111111;
+    background-color: #1a1a1a;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 16px;
-    color: #ffffff;
+    color: #cccccc;
 }
 
 #game-header{
@@ -25,7 +25,7 @@ body{
 }
 
 #game-header p {
-    color: #aaaaaa;
+    color: #888888;
     margin-top: 4px;
 }
 
@@ -42,7 +42,7 @@ body{
 #info-panel, #guide-panel{
     width: 220px;
     padding: 16px;
-    border: 2px solid #ffffff;
+    border: 2px solid #555555;
 }
 
 #info-panel h2, #guide-panel h2 {
@@ -52,6 +52,12 @@ body{
 
 #info-panel p {
     margin-bottom: 8px;
+}
+
+#message {
+    margin-top: 16px;
+    font-weight: bold;
+    color: #c05050;
 }
 
 #guide-panel ul {
@@ -78,22 +84,22 @@ body{
     padding: 3px 6px;
     text-align: center;
     font-size: 14px;
-    color: #f0a000;
-    border: 1px solid #f0a000;
+    color: #c9a66b;
+    border: 1px solid #7a6a4a;
     border-radius: 4px;
 }
 
 #game-board{
-    border: 2px solid #ffffff;
+    border: 2px solid #555555;
 }
 
 #board{
     border-collapse: collapse;
-    background-color: #000000;
+    background-color: #101010;
 }
 
 #board td{
-    border: 1px solid #555555;
+    border: 1px solid #2c2c2c;
     width: 30px;
     height: 30px;
 }

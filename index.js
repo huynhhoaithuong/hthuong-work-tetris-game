@@ -1,4 +1,4 @@
-// dựng khunh
+// dựng khung
 const table = document.getElementById('board')
 const COLS = 10;
 const ROWS = 20;
@@ -48,13 +48,13 @@ const SHAPES = {
 }
 
 const COLORS = {
-    I: '#00f0f0',
-    O: '#f0f000',
-    T: '#a000f0',
-    S: '#00f000',
-    Z: '#f00000',
-    J: '#0000f0',
-    L: '#f0a000'
+    I: '#4fa3a8',
+    O: '#b8a13a',
+    T: '#8a5fa8',
+    S: '#5a9a5a',
+    Z: '#b05555',
+    J: '#5a6fb0',
+    L: '#c08a45'
 };
 
 // 0 là ô trống, ô đã lock sẽ lưu màu khối
@@ -77,6 +77,14 @@ function createGrid(){
 
 let piece=null
 
+const scoreText = document.getElementById('score');
+const linesText = document.getElementById('lines');
+const message = document.getElementById('message');
+let score = 0;
+let totalLines = 0;
+let gameOver = false;
+let timer = null;
+
 // tạo 1 khối ngẫu nhiên
 function randomPiece(){
     const types = Object.keys(SHAPES);
@@ -94,6 +102,13 @@ function randomPiece(){
 //đưa khối moi71 vừa tạo vào
 function spawnPiece(){
     piece = randomPiece();
+    //khối mới tạo dụng khối khác và hết chồ thì game over
+    if(collide(piece.shape, piece.row, piece.col)){
+        gameOver=true;
+        clearInterval(timer);
+        message.innerText = 'GAME OVER';
+        piece = null;
+    }
 }
 
 //tô khối đè lên bảng (chưa lock vẫn đg di chuyển)
@@ -133,6 +148,33 @@ function lockPiece(){
         }
     }
 }
+//hàng đầy
+function isFullRow(row){
+    for(let col = 0; col < COLS; col++){
+        if(board[row][col]===0) return false;
+    }
+    return true;
+}
+//xóa hàng đã đấy, mỗi hàng xóa được cộng 100đ
+function clearLines(){
+    let cleared = 0;
+    for(let row = ROWS - 1; row >= 0; row--){
+        if(isFullRow(row)){
+            for(let r = row; r > 0; r--){
+                board[r]=board[r-1]
+            }
+            board[0] = new Array(COLS).fill(0);
+            cleared++;
+            row++;
+        }
+    }
+    if(cleared>0){
+        totalLines += cleared;
+        score += cleared * 100;
+        scoreText.innerText = score;
+        linesText.innerText = totalLines;
+    }
+}
 
 //rơi khối, nếu không thể rơi tiếp thì lock khối đó, tạo khối mới và render
 function drop(){
@@ -140,6 +182,7 @@ function drop(){
         piece.row++;
     } else {
         lockPiece();
+        clearLines();
         spawnPiece();
     }
     render();
