@@ -69,9 +69,18 @@ body{
 #guide-panel .keys {
     display: flex;
     gap: 4px;
-    min-width: 52px;
-    font-size: 20px;
+    min-width: 64px;
+}
+
+#guide-panel kbd {
+    display: inline-block;
+    min-width: 28px;
+    padding: 3px 6px;
+    text-align: center;
+    font-size: 14px;
     color: #f0a000;
+    border: 1px solid #f0a000;
+    border-radius: 4px;
 }
 
 #game-board{

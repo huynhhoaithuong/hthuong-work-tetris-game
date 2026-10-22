@@ -80,7 +80,7 @@ let piece=null
 // tạo 1 khối ngẫu nhiên
 function randomPiece(){
     const types = Object.keys(SHAPES);
-    const type = types[Math.floor(math.random() * types.length)];
+    const type = types[Math.floor(Math.random() * types.length)];
     const shape = SHAPES[type];
 
     return{
@@ -96,7 +96,7 @@ function spawnPiece(){
     piece = randomPiece();
 }
 
-//tô khối e lên bảng (chưa lock vẫn đg di chuyển)
+//tô khối đè lên bảng (chưa lock vẫn đg di chuyển)
 function drawPiece(){
     for (let r = 0; r < piece.shape.length; r++) {
         for (let c = 0; c < piece.shape[r].length; c++) {
@@ -145,10 +145,47 @@ function drop(){
     render();
 }
 
+//di chuyển khối nêu vị trí mới kh bị va chạm
+function movePiece(dRow, dCol){
+    if(!collide(piece.shape, piece.row + dRow, piece.col + dCol)){
+        piece.row += dRow;
+        piece.col += dCol;
+        render();
+    }
+}
+
+//rơi ngay
+function hardDrop(){
+    while(!collide(piece.shape, piece.row + 1, piece.col)){
+        piece.row++;
+    }
+    drop();
+}
+
+//bắt phím
+document.addEventListener('keydown', function (event){
+    switch(event.key){
+        case 'ArrowLeft':
+            movePiece(0, -1);
+            break;
+        case 'ArrowRight':
+            movePiece(0, 1);
+            break;
+        case 'ArrowDown':
+            event.preventDefault();
+            movePiece(1, 0);
+            break;
+        case ' ':
+            event.preventDefault();
+            hardDrop();
+            break;
+    }
+})
+
 function render(){
     for(let row = 0; row < ROWS; row++) {
         for(let col = 0; col < COLS; col++) {
-            cells[row][col].style.backgroundColor = COLORS[board[row][col]] || '';
+            cells[row][col].style.backgroundColor = board[row][col] || '';
         }
     }
     if (piece) drawPiece();
