@@ -161,6 +161,26 @@ function hardDrop(){
     }
     drop();
 }
+// xoay khối 90 độ
+function rotate(shape){
+    const newShape = [];
+    for(let col = 0; col < shape.length; col++){
+        const newRow =[];
+        for(let row = shape.length-1; row >= 0; row--){
+            newRow.push(shape[row][col]);
+        }
+        newShape.push(newRow);
+    }
+    return newShape;
+}
+
+function rotatePiece(){
+    const newShape = rotate(piece.shape);
+    if(!collide(newShape, piece.row, piece.col)){
+        piece.shape = newShape;
+        render();
+    }
+}
 
 //bắt phím
 document.addEventListener('keydown', function (event){
@@ -170,6 +190,10 @@ document.addEventListener('keydown', function (event){
             break;
         case 'ArrowRight':
             movePiece(0, 1);
+            break;
+        case 'ArrowUp':
+            event.preventDefault();
+            rotatePiece();
             break;
         case 'ArrowDown':
             event.preventDefault();
