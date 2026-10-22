@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Tetris</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body{
+            background-color: #1a1a1a;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            color: #cccccc;
+        }
+
+        #game-header{
+            text-align: center;
+        }
+
+        #game-header h1{
+            font-size: 48px;
+            letter-spacing: 6px;
+        }
+
+        #game-header p {
+            color: #888888;
+            margin-top: 4px;
+        }
+
+        #game-container{
+            display: flex;
+        }
+
+        #game-main{
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+        }
+
+        #info-panel, #guide-panel{
+            width: 220px;
+            padding: 16px;
+            border: 2px solid #555555;
+        }
+
+        #info-panel h2, #guide-panel h2 {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        #info-panel p {
+            margin-bottom: 8px;
+        }
+
+        #message {
+            margin-top: 16px;
+            font-weight: bold;
+            color: #c05050;
+        }
+
+        #guide-panel ul {
+            list-style: none;
+        }
+
+        #guide-panel li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        #guide-panel .keys {
+            display: flex;
+            gap: 4px;
+            min-width: 64px;
+        }
+
+        #guide-panel kbd {
+            display: inline-block;
+            min-width: 28px;
+            padding: 3px 6px;
+            text-align: center;
+            font-size: 14px;
+            color: #c9a66b;
+            border: 1px solid #7a6a4a;
+            border-radius: 4px;
+        }
+
+        #game-board{
+            border: 2px solid #555555;
+        }
+
+        #board{
+            border-collapse: collapse;
+            background-color: #101010;
+        }
+
+        #board td{
+            border: 1px solid #2c2c2c;
+            width: 30px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+<header id="game-header">
+    <h1>TETRIS</h1>
+    <p>Màn 1: Chế độ cổ điển</p>
+</header>
+
+<div id="game-container">
+    <div id="game-main">
+        <div id="info-panel">
+            <h2>THÔNG TIN</h2>
+            <p>Điểm: <span id="score">0</span></p>
+            <p>Số hàng đã xóa: <span id="lines">0</span></p>
+            <p id="message"></p>
+        </div>
+
+        <div id="game-board">
+            <table id="board"></table>
+        </div>
+
+        <div id="guide-panel">
+            <h2>HƯỚNG DẪN</h2>
+            <ul>
+                <li><span class="keys"><kbd>←</kbd><kbd>→</kbd></span> Di chuyển trái / phải</li>
+                <li><span class="keys"><kbd>↓</kbd></span> Rơi nhanh</li>
+                <li><span class="keys"><kbd>↑</kbd></span> Xoay khối</li>
+                <li><span class="keys"><kbd>Space</kbd></span> Rơi ngay</li>
+                <li><span class="keys"><kbd>P</kbd></span> Tạm dừng</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script src="game.js"></script>
+</body>
+</html>
