@@ -63,7 +63,7 @@ const L1_DROP = 500;
 
 //màn 2
 const L2_GOAL = 15;
-const L2_TIME = 180;
+const L2_TIME = 150;
 const L2_START_DROP = 400;
 const L2_UP_EVERY = 15;
 const L2_UP_STEP = 40;
@@ -117,6 +117,7 @@ const mission2 = document.getElementById('mission-2');
 const mission3 = document.getElementById('mission-3');
 const timeText = document.getElementById('time-left');
 const speedText = document.getElementById('speed-level');
+const levelBtns = document.getElementsByClassName('level-btn');
 
 let level = 1;
 let goalLines = L1_GOAL;
@@ -374,6 +375,12 @@ function startLevel() {
     restartBtn.blur();
     nextBtn.blur();
 
+    for (let i = 0; i < levelBtns.length; i++) {
+        levelBtns[i].setAttribute('class', 'level-btn');
+        levelBtns[i].blur();
+    }
+    levelBtns[level - 1].setAttribute('class', 'level-btn active');
+
     mission1.style.display = 'none';
     mission2.style.display = 'none';
     mission3.style.display = 'none';
@@ -426,7 +433,11 @@ function nextLevel() {
     startLevel();
 }
 
-
+//cho màn
+function selectLevel(n){
+    level=n;
+    startLevel();
+}
 //bắt phím
 document.onkeydown=function(event){
     if(gameOver) return;;

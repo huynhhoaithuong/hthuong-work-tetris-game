@@ -35,6 +35,42 @@
             margin-top: 4px;
         }
 
+        #level-select {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            width: fit-content;
+            margin: 12px auto 0;
+            padding: 8px 12px;
+            border: 2px solid #555555;
+            border-radius: 4px;
+        }
+
+        .level-btn {
+            padding: 6px 16px;
+            background-color: #2c2c2c;
+            color: #cccccc;
+            border: 1px solid #555555;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .level-btn:hover {
+            background-color: #3a3a3a;
+        }
+
+        .level-btn.active {
+            color: #c9a66b;
+            border-color: #7a6a4a;
+            background-color: #3a3a3a;
+        }
+
+        .level-btn:disabled {
+            background-color: #2c2c2c;
+            color: #666666;
+            cursor: not-allowed;
+        }
+
         #game-container{
             display: flex;
         }
@@ -155,6 +191,14 @@
 <body>
 <header id="game-header">
     <h1>TETRIS</h1>
+
+    <nav id="level-select">
+        <button class="level-btn" onclick="selectLevel(1)">Màn 1</button>
+        <button class="level-btn" onclick="selectLevel(2)">Màn 2</button>
+        <button class="level-btn" onclick="selectLevel(3)" disabled>Màn 3</button>
+        <button class="level-btn" onclick="selectLevel(4)" disabled>Màn 4</button>
+    </nav>
+
     <p id="level-title">Màn 1: Chế độ cổ điển</p>
 </header>
 
