@@ -58,8 +58,15 @@ const COLORS = {
 };
 
 //màn 1: xóa 10 hàng thì hao2n thành
-const GOAT_LINES = 10;
-const DROP_TIME = 500;
+const L1_GOAL = 10;
+const L1_DROP = 500;
+
+//màn 2
+const L2_GOAL = 15;
+const L2_TIME = 90;
+const L2_START_DROP = 400;
+const SPEED_UP_EVERY = 15;
+const SPEED_UP_STEP = 40;
 
 // 0 là ô trống, ô đã lock sẽ lưu màu khối
 const board = [];
@@ -81,16 +88,28 @@ function createGrid(){
 
 let piece=null
 
+const levelTitle = document.getElementById('level-title');
+const nextBtn = document.getElementById('btn-next');
+const restartBtn = document.getElementById('btn-restart');
 const scoreText = document.getElementById('score');
 const linesText = document.getElementById('lines');
 const message = document.getElementById('message');
-const missionLines = document.getElementById('mission-lines');
+const mission1 = document.getElementById('mission-1');
+const mission2 = document.getElementById('mission-2');
+const timeText = document.getElementById('time-left');
+const speedText = document.getElementById('speed-level');
+
+let level = 1;
+let goalLines = L1_GOAL;
 let score = 0;
 let totalLines = 0;
 let gameOver = false;
 let paused = false;
-const restartBtn = document.getElementById('btn-restart');
+let dropTime = L1_DROP;
+let timeLeft = L2_TIME;
+let speedLevel = 1;
 let timer = null;
+let clockTimer = null;
 
 // tạo 1 khối ngẫu nhiên
 function randomPiece(){
@@ -113,6 +132,7 @@ function spawnPiece(){
     if(collide(piece.shape, piece.row, piece.col)){
         gameOver=true;
         clearInterval(timer);
+        clearInterval(clockTimer);
         message.innerHTML = 'GAME OVER';
         piece = null;
     }
@@ -162,6 +182,20 @@ function isFullRow(row){
     }
     return true;
 }
+
+//qua màn
+function winLevel(){
+    gameOver=true;
+    clearInterval(timer);
+    clearInterval(clockTimer);
+    message.innerHTML= 'HOÀN THÀNH MÀN ' + level + '!';
+    message.style.color = '#6fae6f';
+
+    if(level === 1){
+        nextBtn.style.display = 'block';
+    }
+    
+}
 //xóa hàng đã đấy, mỗi hàng xóa được cộng 100đ
 function clearLines(){
     let cleared = 0;
@@ -180,13 +214,9 @@ function clearLines(){
         score += cleared * 100;
         scoreText.innerHTML = score;
         linesText.innerHTML = totalLines;
-        missionLines.innerHTML = totalLines;
 
-        if(totalLines >= GOAT_LINES){
-            gameOver=true;
-            clearInterval(timer);
-            message.innerHTML = 'HOÀN THÀNH MÀN 1';
-            message.style.color = '#6fae6f';
+        if (totalLines >= goalLines) {
+            winLevel();
         }
     }
 }
@@ -244,21 +274,54 @@ function rotatePiece(){
     }
 }
 
+//tăng tốc
+function speedUp() {
+    dropTime = dropTime - SPEED_UP_STEP;
+    speedLevel++;
+    speedText.innerHTML = speedLevel;
+    clearInterval(timer);
+    timer = setInterval(drop, dropTime);
+}
+
+//đếm ngược thời gian
+function tickClock() {
+    timeLeft--;
+    timeText.innerHTML = timeLeft;
+
+    //cứ 15 giây tăng tốc 1 lần
+    if (timeLeft > 0 && timeLeft % SPEED_UP_EVERY === 0) {
+        speedUp();
+    }
+
+    //hết giờ mà chưa xóa đủ hàng thì thua
+    if (timeLeft <= 0) {
+        gameOver = true;
+        clearInterval(timer);
+        clearInterval(clockTimer);
+        message.innerHTML = 'HẾT GIỜ!';
+    }
+}
+
+
 //nút tạm dừng và chơi tiếp game
 function togglePause(){
     if(paused){
         paused = false;
         message.innerHTML = '';
-        timer = setInterval(drop, 500);
+        timer = setInterval(drop, dropTime);
+        if (level === 2) {
+            clockTimer = setInterval(tickClock, 1000);
+        }
     }else {
         paused = true;
         message.innerHTML = 'TẠM DỪNG';
         clearInterval(timer);
+        clearInterval(clockTimer);
     }
 }
 
-//chơi lại game
-function restart(){
+//bắt đầu/ bđ lại màn hiện tại
+function startLevel() {
     for (let row = 0; row < ROWS; row++) {
         for (let col = 0; col < COLS; col++) {
             board[row][col] = 0;
@@ -270,18 +333,51 @@ function restart(){
     paused = false;
     scoreText.innerHTML = 0;
     linesText.innerHTML = 0;
-    missionLines.innerHTML = 0;
     message.innerHTML = '';
     message.style.color = '';
+    nextBtn.style.display = 'none';
     clearInterval(timer);
+    clearInterval(clockTimer);
     restartBtn.blur();
+    nextBtn.blur();
+
+    if (level === 1) {
+        levelTitle.innerHTML = 'Màn 1: Chế độ cổ điển';
+        mission1.style.display = 'block';
+        mission2.style.display = 'none';
+        dropTime = L1_DROP;
+        goalLines = L1_GOAL;
+    } else {
+        levelTitle.innerHTML = 'Màn 2: Thử thách tốc độ';
+        mission1.style.display = 'none';
+        mission2.style.display = 'block';
+        dropTime = L2_START_DROP;
+        goalLines = L2_GOAL;
+        speedLevel = 1;
+        timeLeft = L2_TIME;
+        timeText.innerHTML = timeLeft;
+        speedText.innerHTML = speedLevel;
+        clockTimer = setInterval(tickClock, 1000);
+    }
+
     spawnPiece();
     render();
-    timer = setInterval(drop, DROP_TIME);
+    timer = setInterval(drop, dropTime);
 }
 
+//chơi lại game
+function restart(){
+    startLevel();
+}
+//nút màn tiếp theo
+function nextLevel() {
+    level++;
+    startLevel();
+}
+
+
 //bắt phím
-document.addEventListener('keydown', function (event){
+document.onkeydown=function(event){
     if(gameOver) return;;
     if(event.key==='p' || event.key==='P'){
         togglePause();
@@ -309,7 +405,7 @@ document.addEventListener('keydown', function (event){
             hardDrop();
             break;
     }
-})
+};
 
 function render(){
     for(let row = 0; row < ROWS; row++) {
@@ -322,9 +418,7 @@ function render(){
 
 function init(){
     createGrid();
-    spawnPiece();
-    render();
-    timer=setInterval(drop, DROP_TIME);
+    startLevel()
 }
 
 init();
