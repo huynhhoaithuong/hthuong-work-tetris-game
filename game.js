@@ -57,6 +57,10 @@ const COLORS = {
     L: '#c08a45'
 };
 
+//màn 1: xóa 10 hàng thì hao2n thành
+const GOAT_LINES = 10;
+const DROP_TIME = 500;
+
 // 0 là ô trống, ô đã lock sẽ lưu màu khối
 const board = [];
 for(let row = 0; row < ROWS; row++) {
@@ -80,9 +84,12 @@ let piece=null
 const scoreText = document.getElementById('score');
 const linesText = document.getElementById('lines');
 const message = document.getElementById('message');
+const missionLines = document.getElementById('mission-lines');
 let score = 0;
 let totalLines = 0;
 let gameOver = false;
+let paused = false;
+const restartBtn = document.getElementById('btn-restart');
 let timer = null;
 
 // tạo 1 khối ngẫu nhiên
@@ -106,7 +113,7 @@ function spawnPiece(){
     if(collide(piece.shape, piece.row, piece.col)){
         gameOver=true;
         clearInterval(timer);
-        message.innerText = 'GAME OVER';
+        message.innerHTML = 'GAME OVER';
         piece = null;
     }
 }
@@ -171,8 +178,16 @@ function clearLines(){
     if(cleared>0){
         totalLines += cleared;
         score += cleared * 100;
-        scoreText.innerText = score;
-        linesText.innerText = totalLines;
+        scoreText.innerHTML = score;
+        linesText.innerHTML = totalLines;
+        missionLines.innerHTML = totalLines;
+
+        if(totalLines >= GOAT_LINES){
+            gameOver=true;
+            clearInterval(timer);
+            message.innerHTML = 'HOÀN THÀNH MÀN 1';
+            message.style.color = '#6fae6f';
+        }
     }
 }
 
@@ -183,7 +198,11 @@ function drop(){
     } else {
         lockPiece();
         clearLines();
-        spawnPiece();
+        if(gameOver) {
+            piece = null;
+        }else{
+            spawnPiece();
+        }
     }
     render();
 }
@@ -225,8 +244,51 @@ function rotatePiece(){
     }
 }
 
+//nút tạm dừng và chơi tiếp game
+function togglePause(){
+    if(paused){
+        paused = false;
+        message.innerHTML = '';
+        timer = setInterval(drop, 500);
+    }else {
+        paused = true;
+        message.innerHTML = 'TẠM DỪNG';
+        clearInterval(timer);
+    }
+}
+
+//chơi lại game
+function restart(){
+    for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS; col++) {
+            board[row][col] = 0;
+        }
+    }
+    score = 0;
+    totalLines = 0;
+    gameOver = false;
+    paused = false;
+    scoreText.innerHTML = 0;
+    linesText.innerHTML = 0;
+    missionLines.innerHTML = 0;
+    message.innerHTML = '';
+    message.style.color = '';
+    clearInterval(timer);
+    restartBtn.blur();
+    spawnPiece();
+    render();
+    timer = setInterval(drop, DROP_TIME);
+}
+
 //bắt phím
 document.addEventListener('keydown', function (event){
+    if(gameOver) return;;
+    if(event.key==='p' || event.key==='P'){
+        togglePause();
+        return;
+    }
+
+    if(paused) return;
     switch(event.key){
         case 'ArrowLeft':
             movePiece(0, -1);
@@ -262,7 +324,7 @@ function init(){
     createGrid();
     spawnPiece();
     render();
-    setInterval(drop, 500);
+    timer=setInterval(drop, DROP_TIME);
 }
 
 init();

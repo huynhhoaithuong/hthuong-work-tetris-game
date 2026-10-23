@@ -45,18 +45,24 @@
             gap: 24px;
         }
 
-        #info-panel, #guide-panel{
+        #left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        #info-panel, #mission-panel, #guide-panel{
             width: 220px;
             padding: 16px;
             border: 2px solid #555555;
         }
 
-        #info-panel h2, #guide-panel h2 {
+        #info-panel h2, #mission-panel h2, #guide-panel h2 {
             font-size: 18px;
             margin-bottom: 12px;
         }
 
-        #info-panel p {
+        #info-panel p, #mission-panel p {
             margin-bottom: 8px;
         }
 
@@ -64,6 +70,29 @@
             margin-top: 16px;
             font-weight: bold;
             color: #c05050;
+        }
+
+        #btn-restart {
+            margin-top: 16px;
+            padding: 6px 12px;
+            background-color: #2c2c2c;
+            color: #cccccc;
+            border: 1px solid #555555;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #btn-restart:hover {
+            background-color: #3a3a3a;
+        }
+
+        #mission-panel ul {
+            padding-left: 18px;
+        }
+
+        #mission-panel li {
+            font-size: 14px;
+            margin-bottom: 6px;
         }
 
         #guide-panel ul {
@@ -119,11 +148,26 @@
 
 <div id="game-container">
     <div id="game-main">
-        <div id="info-panel">
-            <h2>THÔNG TIN</h2>
-            <p>Điểm: <span id="score">0</span></p>
-            <p>Số hàng đã xóa: <span id="lines">0</span></p>
-            <p id="message"></p>
+        <div id="left-column">
+            <div id="info-panel">
+                <h2>THÔNG TIN</h2>
+                <p>Điểm: <span id="score">0</span></p>
+                <p>Số hàng đã xóa: <span id="lines">0</span></p>
+                <p id="message"></p>
+                <button id="btn-restart" onclick="restart()">Chơi lại</button>
+            </div>
+
+            <div id="mission-panel">
+                <h2>NHIỆM VỤ MÀN 1</h2>
+                <p>Mục tiêu: xóa <b>10</b> hàng</p>
+                <p>Tiến độ: <span id="mission-lines">0</span>/10 hàng</p>
+                <ul>
+                    <li>Xếp khối kín từng hàng ngang, không để hở ô trống</li>
+                    <li>Hàng đầy sẽ tự biến mất</li>
+                    <li>Tốc độ rơi được giữ nguyên không thay đổi</li>
+                    <li>Làm biến mất 10 hàng tương đương 1000 điểm sẽ hoàn thành màn</li>
+                </ul>
+            </div>
         </div>
 
         <div id="game-board">
