@@ -63,10 +63,27 @@ const L1_DROP = 500;
 
 //màn 2
 const L2_GOAL = 15;
-const L2_TIME = 90;
+const L2_TIME = 180;
 const L2_START_DROP = 400;
-const SPEED_UP_EVERY = 15;
-const SPEED_UP_STEP = 40;
+const L2_UP_EVERY = 15;
+const L2_UP_STEP = 40;
+
+//màn 3
+const L3_GOAL = 10;
+const L3_TIME = 120;
+const L3_START_DROP = 500;
+const L3_UP_EVERY = 30;
+const L3_UP_STEP = 100;
+
+const LAST_LEVEL = 3;
+
+//ô đá nằm ở 3 hàng cuối cùng
+const STONE_COLOR = '#6b6b6b';
+const STONES = [
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+    [0, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+    [0, 1, 0, 1, 0, 0, 1, 0, 1, 0]
+];
 
 // 0 là ô trống, ô đã lock sẽ lưu màu khối
 const board = [];
@@ -93,9 +110,11 @@ const nextBtn = document.getElementById('btn-next');
 const restartBtn = document.getElementById('btn-restart');
 const scoreText = document.getElementById('score');
 const linesText = document.getElementById('lines');
+const extraInfo = document.getElementById('extra-info');
 const message = document.getElementById('message');
 const mission1 = document.getElementById('mission-1');
 const mission2 = document.getElementById('mission-2');
+const mission3 = document.getElementById('mission-3');
 const timeText = document.getElementById('time-left');
 const speedText = document.getElementById('speed-level');
 
@@ -106,8 +125,10 @@ let totalLines = 0;
 let gameOver = false;
 let paused = false;
 let dropTime = L1_DROP;
-let timeLeft = L2_TIME;
+let timeLeft = 0;
 let speedLevel = 1;
+let speedEvery = 0;
+let speedStep = 0;
 let timer = null;
 let clockTimer = null;
 
@@ -175,6 +196,18 @@ function lockPiece(){
         }
     }
 }
+
+//màn 3 đặt các ô đá vào các hàng cuối
+function putStones() {
+    for (let r = 0; r < STONES.length; r++) {
+        for (let c = 0; c < COLS; c++) {
+            if (STONES[r][c] === 1) {
+                board[ROWS - STONES.length + r][c] = STONE_COLOR;
+            }
+        }
+    }
+}
+
 //hàng đầy
 function isFullRow(row){
     for(let col = 0; col < COLS; col++){
@@ -191,10 +224,10 @@ function winLevel(){
     message.innerHTML= 'HOÀN THÀNH MÀN ' + level + '!';
     message.style.color = '#6fae6f';
 
-    if(level === 1){
+    if (level < LAST_LEVEL) {
         nextBtn.style.display = 'block';
     }
-    
+
 }
 //xóa hàng đã đấy, mỗi hàng xóa được cộng 100đ
 function clearLines(){
@@ -309,7 +342,7 @@ function togglePause(){
         paused = false;
         message.innerHTML = '';
         timer = setInterval(drop, dropTime);
-        if (level === 2) {
+        if (level >= 2) {
             clockTimer = setInterval(tickClock, 1000);
         }
     }else {
@@ -341,20 +374,38 @@ function startLevel() {
     restartBtn.blur();
     nextBtn.blur();
 
+    mission1.style.display = 'none';
+    mission2.style.display = 'none';
+    mission3.style.display = 'none';
+    extraInfo.style.display = 'none';
+
     if (level === 1) {
         levelTitle.innerHTML = 'Màn 1: Chế độ cổ điển';
         mission1.style.display = 'block';
-        mission2.style.display = 'none';
         dropTime = L1_DROP;
         goalLines = L1_GOAL;
-    } else {
+    } else if(level === 2){
         levelTitle.innerHTML = 'Màn 2: Thử thách tốc độ';
-        mission1.style.display = 'none';
         mission2.style.display = 'block';
         dropTime = L2_START_DROP;
         goalLines = L2_GOAL;
-        speedLevel = 1;
         timeLeft = L2_TIME;
+        speedEvery = L2_UP_EVERY;
+        speedStep = L2_UP_STEP;
+    }else{
+        levelTitle.innerHTML = 'Màn 3: Vượt chướng ngại vật';
+        mission3.style.display = 'block';
+        dropTime = L3_START_DROP;
+        goalLines = L3_GOAL;
+        timeLeft = L3_TIME;
+        speedEvery = L3_UP_EVERY;
+        speedStep = L3_UP_STEP;
+        putStones();
+    }
+
+    if (level >= 2) {
+        extraInfo.style.display = 'block';
+        speedLevel = 1;
         timeText.innerHTML = timeLeft;
         speedText.innerHTML = speedLevel;
         clockTimer = setInterval(tickClock, 1000);

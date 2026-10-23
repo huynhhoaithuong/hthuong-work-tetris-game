@@ -66,6 +66,10 @@
             margin-bottom: 8px;
         }
 
+        #extra-info {
+            display: none;
+        }
+
         #message {
             margin-top: 16px;
             font-weight: bold;
@@ -89,7 +93,7 @@
         #btn-next {
             display: none;
         }
-        #mission-2 {
+        #mission-2, #mission-3{
             display: none;
         }
 
@@ -161,6 +165,10 @@
                 <h2>THÔNG TIN</h2>
                 <p>Điểm: <span id="score">0</span></p>
                 <p>Số hàng đã xóa: <span id="lines">0</span></p>
+                <div id="extra-info">
+                    <p>Thời gian còn lại: <span id="time-left">90</span> giây</p>
+                    <p>Tốc độ rơi: cấp <span id="speed-level">1</span></p>
+                </div>
                 <p id="message"></p>
                 <button id="btn-restart" onclick="restart()">Chơi lại</button>
                 <button id="btn-next" onclick="nextLevel()">Màn tiếp theo</button>
@@ -179,14 +187,23 @@
 
             <div id="mission-2" class="mission-panel">
                 <h2>NHIỆM VỤ MÀN 2</h2>
-                <p>Mục tiêu: xóa <b>15</b> hàng</p>
-                <p>Thời gian còn lại: <span id="time-left">90</span> giây</p>
-                <p>Tốc độ rơi: cấp <span id="speed-level">1</span></p>
+                <p>Mục tiêu: xóa <b>15</b> hàng trong <b>90</b> giây</p>
                 <ul>
                     <li>Khối rơi nhanh hơn</li>
                     <li>Cứ 15 giây tốc độ rơi tăng 1 cấp</li>
                     <li>Mỗi hàng xóa được 100 điểm</li>
                     <li>Hết 90 giây mà chưa đủ 15 hàng tương đương 1500 điểm là thua</li>
+                </ul>
+            </div>
+
+            <div id="mission-3" class="mission-panel">
+                <h2>NHIỆM VỤ MÀN 3</h2>
+                <p>Mục tiêu: xóa <b>10</b> hàng trong <b>120</b> giây</p>
+                <ul>
+                    <li>Các ô đá màu xám nằm sẵn ở đáy bàn chơi</li>
+                    <li>Lấp đầy ô trống quanh đá để xóa hàng và dọn đường</li>
+                    <li>Cứ 30 giây tốc độ rơi tăng 1 cấp</li>
+                    <li>Hết 120 giây mà chưa hoàn thành hết 10 hàng thì kết thúc</li>
                 </ul>
             </div>
         </div>
