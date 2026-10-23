@@ -57,6 +57,10 @@ const COLORS = {
     L: '#c08a45'
 };
 
+//màn 1: xóa 10 hàng thì hao2n thành
+const GOAT_LINES = 10;
+const DROP_TIME = 500;
+
 // 0 là ô trống, ô đã lock sẽ lưu màu khối
 const board = [];
 for(let row = 0; row < ROWS; row++) {
@@ -80,6 +84,7 @@ let piece=null
 const scoreText = document.getElementById('score');
 const linesText = document.getElementById('lines');
 const message = document.getElementById('message');
+const missionLines = document.getElementById('mission-lines');
 let score = 0;
 let totalLines = 0;
 let gameOver = false;
@@ -175,6 +180,14 @@ function clearLines(){
         score += cleared * 100;
         scoreText.innerHTML = score;
         linesText.innerHTML = totalLines;
+        missionLines.innerHTML = totalLines;
+
+        if(totalLines >= GOAT_LINES){
+            gameOver=true;
+            clearInterval(timer);
+            message.innerHTML = 'HOÀN THÀNH MÀN 1';
+            message.style.color = '#6fae6f';
+        }
     }
 }
 
@@ -185,7 +198,11 @@ function drop(){
     } else {
         lockPiece();
         clearLines();
-        spawnPiece();
+        if(gameOver) {
+            piece = null;
+        }else{
+            spawnPiece();
+        }
     }
     render();
 }
@@ -253,12 +270,14 @@ function restart(){
     paused = false;
     scoreText.innerHTML = 0;
     linesText.innerHTML = 0;
+    missionLines.innerHTML = 0;
     message.innerHTML = '';
+    message.style.color = '';
     clearInterval(timer);
     restartBtn.blur();
     spawnPiece();
     render();
-    timer = setInterval(drop, 500);
+    timer = setInterval(drop, DROP_TIME);
 }
 
 //bắt phím
@@ -305,7 +324,7 @@ function init(){
     createGrid();
     spawnPiece();
     render();
-    timer=setInterval(drop, 500);
+    timer=setInterval(drop, DROP_TIME);
 }
 
 init();
