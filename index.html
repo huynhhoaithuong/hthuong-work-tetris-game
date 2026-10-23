@@ -66,6 +66,20 @@
             color: #c05050;
         }
 
+        #btn-restart {
+            margin-top: 16px;
+            padding: 6px 12px;
+            background-color: #2c2c2c;
+            color: #cccccc;
+            border: 1px solid #555555;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #btn-restart:hover {
+            background-color: #3a3a3a;
+        }
+
         #guide-panel ul {
             list-style: none;
         }
@@ -124,6 +138,7 @@
             <p>Điểm: <span id="score">0</span></p>
             <p>Số hàng đã xóa: <span id="lines">0</span></p>
             <p id="message"></p>
+            <button id="btn-restart" onclick="restart()">Chơi lại</button>
         </div>
 
         <div id="game-board">

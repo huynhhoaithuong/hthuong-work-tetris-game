@@ -83,6 +83,8 @@ const message = document.getElementById('message');
 let score = 0;
 let totalLines = 0;
 let gameOver = false;
+let paused = false;
+const restartBtn = document.getElementById('btn-restart');
 let timer = null;
 
 // tạo 1 khối ngẫu nhiên
@@ -106,7 +108,7 @@ function spawnPiece(){
     if(collide(piece.shape, piece.row, piece.col)){
         gameOver=true;
         clearInterval(timer);
-        message.innerText = 'GAME OVER';
+        message.innerHTML = 'GAME OVER';
         piece = null;
     }
 }
@@ -171,8 +173,8 @@ function clearLines(){
     if(cleared>0){
         totalLines += cleared;
         score += cleared * 100;
-        scoreText.innerText = score;
-        linesText.innerText = totalLines;
+        scoreText.innerHTML = score;
+        linesText.innerHTML = totalLines;
     }
 }
 
@@ -225,8 +227,49 @@ function rotatePiece(){
     }
 }
 
+//nút tạm dừng và chơi tiếp game
+function togglePause(){
+    if(paused){
+        paused = false;
+        message.innerHTML = '';
+        timer = setInterval(drop, 500);
+    }else {
+        paused = true;
+        message.innerHTML = 'TẠM DỪNG';
+        clearInterval(timer);
+    }
+}
+
+//chơi lại game
+function restart(){
+    for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS; col++) {
+            board[row][col] = 0;
+        }
+    }
+    score = 0;
+    totalLines = 0;
+    gameOver = false;
+    paused = false;
+    scoreText.innerHTML = 0;
+    linesText.innerHTML = 0;
+    message.innerHTML = '';
+    clearInterval(timer);
+    restartBtn.blur();
+    spawnPiece();
+    render();
+    timer = setInterval(drop, 500);
+}
+
 //bắt phím
 document.addEventListener('keydown', function (event){
+    if(gameOver) return;;
+    if(event.key==='p' || event.key==='P'){
+        togglePause();
+        return;
+    }
+
+    if(paused) return;
     switch(event.key){
         case 'ArrowLeft':
             movePiece(0, -1);
@@ -262,7 +305,7 @@ function init(){
     createGrid();
     spawnPiece();
     render();
-    setInterval(drop, 500);
+    timer=setInterval(drop, 500);
 }
 
 init();
