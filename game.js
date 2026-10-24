@@ -63,8 +63,8 @@ const L1_DROP = 500;
 
 //màn 2
 const L2_GOAL = 15;
-const L2_TIME = 150;
-const L2_START_DROP = 400;
+const L2_TIME = 120;
+const L2_START_DROP = 350;
 const L2_UP_EVERY = 15;
 const L2_UP_STEP = 40;
 
