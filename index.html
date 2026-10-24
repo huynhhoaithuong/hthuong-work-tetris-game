@@ -129,7 +129,7 @@
         #btn-next {
             display: none;
         }
-        #mission-2, #mission-3{
+        #mission-2, #mission-3, #mission-4{
             display: none;
         }
 
@@ -196,7 +196,7 @@
         <button class="level-btn" onclick="selectLevel(1)">Màn 1</button>
         <button class="level-btn" onclick="selectLevel(2)">Màn 2</button>
         <button class="level-btn" onclick="selectLevel(3)">Màn 3</button>
-        <button class="level-btn" onclick="selectLevel(4)" disabled>Màn 4</button>
+        <button class="level-btn" onclick="selectLevel(4)" >Màn 4</button>
     </nav>
 
     <p id="level-title">Màn 1: Chế độ cổ điển</p>
@@ -236,7 +236,7 @@
                     <li>Khối rơi nhanh hơn</li>
                     <li>Cứ 15 giây tốc độ rơi tăng 1 cấp</li>
                     <li>Mỗi hàng xóa được 100 điểm</li>
-                    <li>Hết 90 giây mà chưa đủ 15 hàng tương đương 1500 điểm là thua</li>
+                    <li>Hết 120 giây mà chưa đủ 15 hàng tương đương 1500 điểm là thua</li>
                 </ul>
             </div>
 
@@ -248,6 +248,17 @@
                     <li>Lấp đầy ô trống quanh đá để xóa hàng và dọn đường</li>
                     <li>Cứ 30 giây tốc độ rơi tăng 1 cấp</li>
                     <li>Hết 120 giây mà chưa hoàn thành hết 10 hàng thì kết thúc</li>
+                </ul>
+            </div>
+
+            <div id="mission-4" class="mission-panel">
+                <h2>NHIỆM VỤ MÀN 4</h2>
+                <p>Mục tiêu: sống sót trong <b>90</b> giây</p>
+                <ul>
+                    <li>Cứ 15 giây sẽ có 1 hàng được đẩy từ dưới lên, cảnh báo trước 2 giây khi hàng xuất hiện</li>
+                    <li>lấp đầy ô trống trong hàng rác để xóa hàng</li>
+                    <li>Khối rơi nhanh dần</li>
+                    <li>Hàng trên cùng bị đẩy ra ngoài hoặc khối chạm đỉnh là thua</li>
                 </ul>
             </div>
         </div>
