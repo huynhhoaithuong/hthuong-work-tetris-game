@@ -116,7 +116,7 @@ function createGrid(){
     }
 }
 
-let piece=null
+let piece=null;
 
 const levelTitle = document.getElementById('level-title');
 const gameBoard = document.getElementById('game-board');
@@ -527,7 +527,7 @@ function selectLevel(n){
 }
 //bắt phím
 document.onkeydown=function(event){
-    if(gameOver) return;;
+    if(gameOver) return;
     if(event.key==='p' || event.key==='P'){
         togglePause();
         return;
