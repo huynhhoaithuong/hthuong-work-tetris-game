@@ -63,9 +63,9 @@ const L1_DROP = 500;
 
 //màn 2
 const L2_GOAL = 15;
-const L2_TIME = 150;
-const L2_START_DROP = 400;
-const L2_UP_EVERY = 15;
+const L2_TIME = 120;
+const L2_START_DROP = 350;
+const L2_UP_EVERY = 20;
 const L2_UP_STEP = 40;
 
 //màn 3
@@ -75,15 +75,28 @@ const L3_START_DROP = 500;
 const L3_UP_EVERY = 30;
 const L3_UP_STEP = 100;
 
-const LAST_LEVEL = 3;
+//màn 4
+const L4_TIME = 90;
+const L4_START_DROP = 500;
+const L4_UP_EVERY = 10;
+const L4_UP_STEP = 50;
+const L4_MIN_DROP = 150;
+const L4_GARBAGE_EVERY = 15;
+const L4_WARN_TIME = 2;
 
-//ô đá nằm ở 3 hàng cuối cùng
+const LAST_LEVEL = 4;
+
+//ô đá nằm ở 4 hàng cuối cùng
 const STONE_COLOR = '#6b6b6b';
 const STONES = [
     [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
     [0, 1, 0, 0, 0, 0, 1, 0, 0, 0],
-    [0, 1, 0, 1, 0, 0, 1, 0, 1, 0]
+    [1, 1, 0, 0, 0, 0, 1, 0, 0, 1],
+    [1, 1, 0, 0, 1, 0, 1, 0, 0, 1]
 ];
+
+//hàng rac1
+const GARBAGE_COLOR = '#6e5f5f';
 
 // 0 là ô trống, ô đã lock sẽ lưu màu khối
 const board = [];
@@ -103,9 +116,10 @@ function createGrid(){
     }
 }
 
-let piece=null
+let piece=null;
 
 const levelTitle = document.getElementById('level-title');
+const gameBoard = document.getElementById('game-board');
 const nextBtn = document.getElementById('btn-next');
 const restartBtn = document.getElementById('btn-restart');
 const scoreText = document.getElementById('score');
@@ -115,9 +129,10 @@ const message = document.getElementById('message');
 const mission1 = document.getElementById('mission-1');
 const mission2 = document.getElementById('mission-2');
 const mission3 = document.getElementById('mission-3');
+const mission4 = document.getElementById('mission-4');
 const timeText = document.getElementById('time-left');
 const speedText = document.getElementById('speed-level');
-const levelBtns = document.getElementsByClassName('level-btn');
+const levelBtn = document.getElementsByClassName('level-btn');
 
 let level = 1;
 let goalLines = L1_GOAL;
@@ -126,6 +141,7 @@ let totalLines = 0;
 let gameOver = false;
 let paused = false;
 let dropTime = L1_DROP;
+let minDrop = 0;
 let timeLeft = 0;
 let speedLevel = 1;
 let speedEvery = 0;
@@ -209,6 +225,45 @@ function putStones() {
     }
 }
 
+//màn 4 1 hàng được đẩy từ dưới lên
+function addGarbageRow(){
+    gameBoard.style.borderColor = '';
+    let lose = false;
+
+    for (let col = 0; col < COLS; col++) {
+        if (board[0][col] !== 0) {
+            lose = true;
+        }
+    }
+
+    if (!lose) {
+        for (let row = 0; row < ROWS - 1; row++) {
+            board[row] = board[row + 1];
+        }
+        //hàng rác chỉ chừa 1 ô trống ngẫu nhiên
+        const garbageRow = new Array(COLS).fill(GARBAGE_COLOR);
+        garbageRow[Math.floor(Math.random() * COLS)] = 0;
+        board[ROWS - 1] = garbageRow;
+
+        // khối đang rơi bị đè lên thì đẩy nó lên 1 hàng theo bàn chơi
+        if (collide(piece.shape, piece.row, piece.col)) {
+            piece.row--;
+            if (piece.row < 0 || collide(piece.shape, piece.row, piece.col)) {
+                lose = true;
+            }
+        }
+    }
+    if (lose) {
+        gameOver = true;
+        clearInterval(timer);
+        clearInterval(clockTimer);
+        message.innerHTML = 'GAME OVER';
+        piece = null;
+    }
+    render();
+
+}
+
 //hàng đầy
 function isFullRow(row){
     for(let col = 0; col < COLS; col++){
@@ -249,7 +304,7 @@ function clearLines(){
         scoreText.innerHTML = score;
         linesText.innerHTML = totalLines;
 
-        if (totalLines >= goalLines) {
+        if (level !== 4 && totalLines >= goalLines) {
             winLevel();
         }
     }
@@ -310,7 +365,13 @@ function rotatePiece(){
 
 //tăng tốc
 function speedUp() {
-    dropTime = dropTime - SPEED_UP_STEP;
+    if(dropTime<=minDrop) return;
+
+    dropTime = dropTime - speedStep;
+    if (dropTime < minDrop) {
+        dropTime = minDrop;
+    }
+
     speedLevel++;
     speedText.innerHTML = speedLevel;
     clearInterval(timer);
@@ -323,16 +384,31 @@ function tickClock() {
     timeText.innerHTML = timeLeft;
 
     //cứ 15 giây tăng tốc 1 lần
-    if (timeLeft > 0 && timeLeft % SPEED_UP_EVERY === 0) {
+    if (timeLeft > 0 && timeLeft % speedEvery === 0) {
         speedUp();
     }
 
-    //hết giờ mà chưa xóa đủ hàng thì thua
+    if (level === 4) {
+        if (timeLeft - L4_WARN_TIME > 0 && (timeLeft - L4_WARN_TIME) % L4_GARBAGE_EVERY === 0) {
+            message.innerHTML = 'CẢNH BÁO: hàng rác sắp xuất hiện!';
+            gameBoard.style.borderColor = '#b05555';
+        }
+        if (timeLeft > 0 && timeLeft % L4_GARBAGE_EVERY === 0) {
+            message.innerHTML = '';
+            addGarbageRow();
+        }
+    }
+
+    //hết giờ
     if (timeLeft <= 0) {
-        gameOver = true;
-        clearInterval(timer);
-        clearInterval(clockTimer);
-        message.innerHTML = 'HẾT GIỜ!';
+        if (level === 4) {
+            winLevel();
+        }else {
+            gameOver = true;
+            clearInterval(timer);
+            clearInterval(clockTimer);
+            message.innerHTML = 'HẾT GIỜ!';
+        }
     }
 }
 
@@ -365,25 +441,28 @@ function startLevel() {
     totalLines = 0;
     gameOver = false;
     paused = false;
+    minDrop=0;
     scoreText.innerHTML = 0;
     linesText.innerHTML = 0;
     message.innerHTML = '';
     message.style.color = '';
+    gameBoard.style.borderColor = '';
     nextBtn.style.display = 'none';
     clearInterval(timer);
     clearInterval(clockTimer);
     restartBtn.blur();
     nextBtn.blur();
 
-    for (let i = 0; i < levelBtns.length; i++) {
-        levelBtns[i].setAttribute('class', 'level-btn');
-        levelBtns[i].blur();
+    for (let i = 0; i < levelBtn.length; i++) {
+        levelBtn[i].setAttribute('class', 'level-btn');
+        levelBtn[i].blur();
     }
-    levelBtns[level - 1].setAttribute('class', 'level-btn active');
+    levelBtn[level - 1].setAttribute('class', 'level-btn active');
 
     mission1.style.display = 'none';
     mission2.style.display = 'none';
     mission3.style.display = 'none';
+    mission4.style.display = 'none';
     extraInfo.style.display = 'none';
 
     if (level === 1) {
@@ -399,7 +478,7 @@ function startLevel() {
         timeLeft = L2_TIME;
         speedEvery = L2_UP_EVERY;
         speedStep = L2_UP_STEP;
-    }else{
+    }else if(level === 3){
         levelTitle.innerHTML = 'Màn 3: Vượt chướng ngại vật';
         mission3.style.display = 'block';
         dropTime = L3_START_DROP;
@@ -408,6 +487,14 @@ function startLevel() {
         speedEvery = L3_UP_EVERY;
         speedStep = L3_UP_STEP;
         putStones();
+    }else{
+        levelTitle.innerHTML = 'Màn 4: Sống sót cuối cùng';
+        mission4.style.display = 'block';
+        dropTime = L4_START_DROP;
+        timeLeft = L4_TIME;
+        speedEvery = L4_UP_EVERY;
+        speedStep = L4_UP_STEP;
+        minDrop = L4_MIN_DROP;
     }
 
     if (level >= 2) {
@@ -440,7 +527,7 @@ function selectLevel(n){
 }
 //bắt phím
 document.onkeydown=function(event){
-    if(gameOver) return;;
+    if(gameOver) return;
     if(event.key==='p' || event.key==='P'){
         togglePause();
         return;
